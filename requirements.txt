@@ -1,4 +1,6 @@
-tensorflow
+tensorflow==2.15.0
 Pillow
-tensorflow_hub
-fastapi
+tensorflow-hub==0.15.0
+fastapi==0.104.1
+opencv-python
+uvicorn==0.24.0.post1

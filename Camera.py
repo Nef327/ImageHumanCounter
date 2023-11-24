@@ -1,6 +1,5 @@
 import cv2
 import datetime
-from Seeker import Seeker
 
 
 # set path in which you want to save images

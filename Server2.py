@@ -1,6 +1,3 @@
-import asyncio
-from threading import Thread
-
 from fastapi import FastAPI
 from fastapi.responses import FileResponse
 from pathlib import Path
@@ -30,4 +27,4 @@ async def image():
 
 if __name__ == '__main__':
     import uvicorn
-    uvicorn.run(app, host="127.0.0.1", port=8001)
+    uvicorn.run(app, host="127.0.0.1", port=8000)
