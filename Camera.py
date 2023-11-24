@@ -1,17 +1,27 @@
-import numpy as np
-import pafy
 import cv2
 
-ph = pafy.new("https://www.youtube.com/watch?v=2wqpy036z24")
+from Seeker import Seeker
 
 
-k = ph.getbest(preftype="mp3")
+# set path in which you want to save images
 
-cap = cv2.VideoCapture(k.url)
+class Cam:
+    def __init__(self, path='video/vid_1.mp4'):
+        self.video = cv2.VideoCapture(path)
+        self.path = path
+        self.process = False
 
-while True:
-    success, img = cap.read()
-    print(img)
+    def re_path(self):
+        self.video = cv2.VideoCapture(self.path)
 
-cap.release()
-cv2.destroyAllWindows()
+    def parse(self, seeker: Seeker):
+        while True:
+            while self.video.isOpened():
+                ret, img = self.video.read()
+                while self.video.isOpened() and ret:
+                    ret, img = self.video.read()
+                    cv2.waitKey(1300)
+                    if self.process:
+                        seeker.model_work(img, True)
+
+            self.re_path()
