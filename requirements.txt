@@ -1,0 +1,5 @@
+tensorflow
+Pillow
+tensorflow_hub
+fastapi
+pydantic
