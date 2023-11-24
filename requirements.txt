@@ -1,0 +1,4 @@
+tensorflow
+Pillow
+tensorflow_hub
+fastapi
