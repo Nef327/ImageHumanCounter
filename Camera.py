@@ -1,5 +1,8 @@
 import cv2
 import datetime
+
+from PIL import Image
+
 from Seeker import Seeker
 
 
@@ -24,4 +27,5 @@ class Cam:
         ret, img = self.video.read()
         img = cv2.cvtColor(img, cv2.COLOR_BGR2RGB)
         #print(self.amount_of_frames, frame, self.fps, self.amount_of_frames)
+        img = Image.fromarray(img.astype('uint8'), mode="RGB")
         return img
