@@ -1,3 +1,9 @@
+import asyncio
+
+import cv2
+import os
+
+import numpy
 import tensorflow
 from PIL import Image, ImageDraw
 import tensorflow_hub
@@ -14,22 +20,25 @@ class Seeker:
         with Image.open(path) as image:
             self.model_work(image, save)
 
-    def model_work(self, image, save: bool = True):
-        image = Image.fromarray(image.astype('uint8'), mode="RGB")
+    def model_work(self, img, save: bool = True, crop=None):
+
+        if crop is None:
+            crop = (0, 0, *img.size)
+        image = img.crop(crop)
         converted_image: EagerTensor = \
-        tensorflow.image.convert_image_dtype(tensorflow.convert_to_tensor(image), tensorflow.float32)[
-            tensorflow.newaxis, ...]
+            tensorflow.image.convert_image_dtype(tensorflow.convert_to_tensor(image), tensorflow.float32)[
+                tensorflow.newaxis, ...]
         res = self.model(converted_image)
         res = {key: value for key, value in res.items()}
 
         people = []
         for entity_i in range(len(res["detection_class_entities"])):
             entity = res["detection_class_entities"][entity_i]
-            if entity in ("Person", "Man", "Woman") and res["detection_scores"][entity_i] >= 0.1:
+            if entity in ("Person", "Man", "Woman") and res["detection_scores"][entity_i] >= 0.13:
                 box = res['detection_boxes'][entity_i]
                 people.append({"detection_scores": res["detection_scores"][entity_i],
                                "entity": "Person",
-                               "box": ((box[1], box[0], box[3], box[2]))})
+                               "box": (box[1], box[0], box[3], box[2])})
         if not people:
             self.count = 0
             image.save("res.jpg")
@@ -42,8 +51,9 @@ class Seeker:
             self.count = len(selected_boxes)
             if save:
                 width, height = image.size
-                draw = ImageDraw.Draw(image)
+                draw = ImageDraw.Draw(img)
                 for box in selected_boxes:
-                    draw.rectangle((box[0] * width, box[1] * height, box[2] * width, box[3] * height), width=3,
+                    draw.rectangle((box[0] * width + crop[0], box[1] * height + crop[1],
+                                    box[2] * width + crop[0], box[3] * height + crop[1]), width=3,
                                    outline="green")
-                image.save("res.jpg")
+                img.save("res.jpg")
